@@ -1,0 +1,17 @@
+{% extends 'accounts/main.html'  %}
+{% load static %}
+
+{% block content %}
+<div class="row" style="padding-left: 500px; padding-top: 20px ;text-align: center;">
+	<div class="col-md-6">
+		<div class="card card-body">
+			<form method="POST" action="">
+				{% csrf_token %}
+				{{form}}
+				<input class="btn btn-primary btn-sm" type="submit" name="Submit">
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

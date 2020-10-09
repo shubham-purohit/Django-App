@@ -1,0 +1,12 @@
+{% extends 'accounts/main.html'  %}
+{% load static %}
+
+{% block content %}
+
+<form method="POST" action="{% url 'create_customer' %}">
+	{% csrf_token %}
+	{{form}}
+	<input class="btn btn-primary btn-sm" type="submit" name="Submit">
+</form>
+
+{% endblock %}
