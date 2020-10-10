@@ -2,7 +2,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+	path('register/', views.register, name='register'),
+	path('login/', views.loginUser, name='login'),
+	path('logout/', views.logoutUser, name = 'logout'),
+
 	path('', views.dashboard, name='home'),
+	path('user/', views.userPage, name='userPage'),
+	path('settings/', views.settings, name='settings'),
 	path('products/', views.product, name='products'),
 	path('customer/<str:cust_id>/', views.customer, name='customer'),
 	path('create_order/<str:cust_id>', views.create_order, name='create_order'),

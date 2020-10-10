@@ -1,0 +1,42 @@
+{% extends 'accounts/main.html'  %}
+
+{% block content %}
+
+<br>
+
+{% include 'accounts/status.html' %}
+
+<div class="row" style="margin:0; padding:20px 0; ">
+	<div class="col-md">
+		<div class="card card-body" style="margin-bottom: 10px;">
+			<h3>Your Orders:</h3>
+		</div>
+		<div class="card card-body">
+			{% if orders.size == 0 %}
+				<h4 style="text-align: center;">No Orders Found</h4>
+			{% endif %}
+			{% if orders.size != 0 %}
+			<table class="table table-sm" >
+				<tr>
+					<th></th>
+					<th>Product</th>
+					<th>Notes</th>
+					<th>Date Ordered</th>
+					<th>Status</th>
+				</tr>
+				{% for order in orders %}
+					<tbody >
+						<td></td>
+						<td>{{order.product.name}}</td>
+						<td>{{order.notes}}</td>
+						<td>{{order.date_created}}</td>
+						<td>{{order.status}}</td>
+					</tbody>
+				{% endfor %}
+			</table>
+			{% endif %}
+		</div>	
+	</div>
+</div>
+
+{% endblock %}
