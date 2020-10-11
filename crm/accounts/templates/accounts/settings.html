@@ -1,21 +1,39 @@
 {% extends 'accounts/main.html'  %}
 
 {% block content %}
+<style type="text/css">
+	.profile_pic {
+		max-height: 300px;
+		max-width: 300px;
+		margin: 0 auto;
+		border-radius: 50%;
+	}
+
+</style>
+
 
 <br>
 
 <div class="row" style="margin:0; padding:20px 0; ">
 	<div class="col-md-4">
 		<div class="card card-body">
-			<a href="#"><button class="bt btn-block btn-warning">&#8592 Back to profile</button></a>
+			<a href="{% url 'userPage'%}"><button class="bt btn-block btn-warning">&#8592 Back to profile</button></a>
 			<hr>
 			<h1 style="text-align: center;">Account Settings</h1>
 			<hr>
+			{% if request.user.customer.profile_pic != '' %}
+				<img class="profile_pic" src="../../static{{request.user.customer.profile_pic.url}}">
+			{% endif %}
+			{% if request.user.customer.profile_pic == '' %}
+				<img class="profile_pic" src="../../static/images/userProfileDefault.png">
+			{% endif %}
 		</div>
 	</div>
 	<div class="col-md-8">
 		<div class="card card-body">	
-			<form method="POST" action="">
+			<form method="POST" action="" enctype="multipart/form-data">
+				{% csrf_token %}
+				{{form.as_p}}
 				<input class="btn btn-primary" type="submit" name="Update Settings">
 			</form>
 		</div>

@@ -51,10 +51,8 @@ def create_order(request, cust_id):
 	formset = OrderFormSet(instance=customer)
 	if request.method == 'POST':
 		formset = OrderFormSet(request.POST, instance = customer)
-		print(formset.is_valid())
 		if formset.is_valid():
 			formset.save()
-			print("Saved!!")
 			return redirect('/')
 		else:
 			return redirect('/')	
@@ -67,9 +65,7 @@ def create_order(request, cust_id):
 @login_required(login_url = 'login')
 def update_order(request, ord_id):
 	order = Order.objects.get(id=ord_id)
-	print(order)
 	if request.method == 'POST':
-		print(order)
 		form = OrderForm(request.POST,instance=order)
 		if form.is_valid():
 			form.save()
@@ -90,15 +86,11 @@ def delete_order(request, ord_id):
 	context = {'order' : order}
 	order = Order.objects.get(id=ord_id)
 	order = Order.objects.get(id=ord_id)
-	print(order)
 	if request.method == 'POST':
-		print(order)
 		form = OrderForm(request.POST,instance=order)
 		if form.is_valid():
 			form.save()
-	print(order)
 	if request.method == 'POST':
-		print(order)
 		form = OrderForm(request.POST,instance=order)
 		if form.is_valid():
 			form.save()
@@ -135,7 +127,17 @@ def userPage(request):
 @login_required(login_url = 'login')
 @allowed_users(allowed_roles = ['customer'])
 def settings(request):
-	context = {}
+	customer = request.user.customer
+	if request.method == 'POST':
+		form = CustomerForm(request.POST,request.FILES, instance=customer)
+		if form.is_valid():
+			form.save()
+			return redirect('settings')
+	else:
+		form = CustomerForm(instance = customer)
+		print(form)
+
+	context = {'form' : form}
 	return render(request, 'accounts/settings.html', context)
 
 
@@ -168,14 +170,6 @@ def register(request):
 		if form.is_valid():
 			user = form.save()
 			username =  form.cleaned_data.get('username')
-
-			group = Group.objects.get(name = 'customer')
-			user.groups.add(group)
-
-			Customer.objects.create(
-				user = user,
-				name = username,
-				)
 
 			messages.success(request, 'Account craeted for ' + username)
 			return redirect('login')
