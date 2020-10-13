@@ -5,9 +5,12 @@ from django.contrib.auth.models import User
 class Customer(models.Model):
 	
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-	name = models.CharField(max_length=200, null=True)
-	phone = models.CharField(max_length=200, null=True)
-	email = models.CharField(max_length=200, null=True)
+	username = models.CharField(max_length=15, null=True)
+	firstname = models.CharField(max_length=20, null=True)
+	lastname = models.CharField(max_length=20, null=True)
+	phone = models.CharField(max_length=10, null=True)
+	email = models.CharField(max_length=30, null=True)
+	address = models.CharField(max_length=60, null=True)
 	profile_pic = models.ImageField(null=True, blank=True)
 	date_created = models.DateTimeField(auto_now_add = True, null=True)	
 
@@ -33,7 +36,9 @@ class Product(models.Model):
 
 	name = models.CharField(max_length=200, null=True)
 	price = models.FloatField()
+	stock = models.PositiveIntegerField()
 	category = models.CharField(max_length=200, null=True, choices=CATEGORY)
+	product_pic = models.ImageField(null=True, blank=True)
 	description = models.CharField(max_length=200, null=True, blank=True)
 	date_created = models.DateTimeField(auto_now_add = True, null=True)
 	tags = models.ManyToManyField(Tag)	

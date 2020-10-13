@@ -12,6 +12,7 @@ def customerProfile(sender, instance, created, **kwrgs):
 		Customer.objects.create(
 			user = instance,
 			name = instance.username,
+			email = instance.email
 			)
 		print("Profile Created!!")
 

@@ -1,0 +1,87 @@
+{% extends 'accounts/main.html'  %}
+
+{% block content %}
+
+<br>
+
+<style type="text/css">
+	.profile_pic {
+		width: 350px;
+		height: 320px;
+		margin: 0 auto;
+	}
+
+	.products {
+	  display: flex;
+	  flex-wrap: wrap;
+	}
+
+	.data-block {
+		display: flex;
+		justify-content: flex-start;
+		padding: 10px;
+		padding-top: 0 !important;
+	}
+
+	
+
+	.product-card {
+	  padding: 0 0 10px 0;
+	  flex-grow: 1;
+	  flex-basis: 16%;
+	  display: flex;
+	  max-width: 352px;
+	  min-width: 352px;
+	  margin-right: 25px;
+	  margin-bottom: 30px;
+	  justify-content: center;
+	  background-color: white;	
+	  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	}
+
+	.product-info {
+	  margin-top: auto;
+	  text-align: center;
+	}
+
+</style>
+	<div style="margin: 0 10px; padding-bottom: 50px;">
+		<div class="card card-body" style="margin-bottom: 30px;">
+			<span style="display : inline-block">
+				{% if request.user.is_staff %}
+				<a style="display : inline-block" class="btn btn-primary btn-sm btn-block" href="{% url 'create_product' %}" style="margin: 10px 0; width: 50px;">Add Product</a>
+				{% endif %}
+			</span>
+		</div>
+		<section class="products">
+		{% for product in products %}	
+		  <div class="product-card">
+		    <div>
+		      <h5 style="text-align: center;"><strong>{{product.name}}</strong></h5>
+		      	{% if product.product_pic %}
+					<img class="profile_pic" src="../../static/images/{{product.product_pic}}">
+				{% else %}
+					<img class="profile_pic" src="../../static/images/product.jpg">
+				{% endif %}
+		      <div class="product-info">
+		      <p style="padding-top: 10px;">{{product.description}}</p>
+		      <span class="inline-block data-block">
+		      	{% if request.user.is_staff %}
+		      	<a href="{% url 'update_product' product.id %}" ><button  class="product-info btn btn-sm" style="background-color: green; color: white;">Update</button></a>
+		      	<a href="{% url 'delete_product' product.id %}"><button class="product-info btn btn-sm btn-danger;" style="background-color: red; color: white;margin-left: 10px;">Delete</button></a>
+		      	{% endif %}
+		      	{% if not request.user.is_staff %}
+		      	<a href="{% url 'buy_now' product.id %}"><button  class="product-info btn btn-sm" style="background-color: green; color: white;">Buy now</button></a>
+		      	<a href=""><button class="product-info btn btn-sm" style="background-color: green; color: white; margin-left: 10px;">Add to cart</button></a>
+		      	{% endif %}
+		      	<h6 class="product-info" style="margin-left: auto;
+  order: 2;"><strong>${{product.price}}</strong></h6></span>
+		    </div>
+		    </div>
+		  </div>
+		  {% endfor %}	
+		</section>
+	</div>	
+
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'accounts/main.html'  %}
+
+{% block content %}
+
+<br>
+
+<div class="row" style="margin:0; padding:20px 0; ">
+	<div class="col-md-4"></div>
+	<div class="col-md-4">
+		<div class="card card-body">
+			<h4>Order Summary:</h4>
+			<div style="margin-top: 30px;">
+				<div>
+					<strong><label>Product Name: </label></strong>
+					<label>{{product.name}}</label>
+				</div>
+				<div>
+					<strong><label>Price: </label></strong>
+					<label>${{product.price}}</label>
+				</div>	
+				<div>
+					<strong><label>Delivery Address:</label></strong>
+					<label>{{request.user.customer.address}}</label>
+				</div>
+				<div>
+					<strong><label>Billing Address:</label></strong>
+					<label>{{request.user.customer.address}}</label>
+				</div>
+				<div style="margin-top: 30px;">
+					<strong><label>Billing Amount:</label></strong>
+					<label>{{product.price}} x 1 = ${{product.price}} (*inclusive of all taxes)</label>
+				</div>		
+			</div>
+		</div>
+		<a href="{% url 'products' %}"><button onclick="order()" style="margin-top: 10px;" class="btn btn-sm btn-primary btn-block"><strong>Place Order</strong></button></a>
+	</div>
+</div>	
+
+<script>
+function order() {
+  alert("Hi! Your order has been placed!");
+}
+</script>	
+
+{% endblock %}

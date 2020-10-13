@@ -1,2 +1,5 @@
 #db file
 *.sqlite3
+*.png
+*.jpg
+*.jpeg

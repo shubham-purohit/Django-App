@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 
 from .models import *
-from .forms import OrderForm, CustomerForm, CreateUserForm
+from .forms import OrderForm, CustomerForm, CreateUserForm, ProductForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users
 
@@ -31,7 +31,8 @@ def dashboard(request):
 @login_required(login_url = 'login')
 def product(request):
 	products = Product.objects.all()
-	return render(request,'accounts/product.html',{'products':products})
+	return render(request,'accounts/products.html',{'products':products})
+
 
 @login_required(login_url = 'login')
 @allowed_users(allowed_roles = ['admin'])
@@ -43,6 +44,56 @@ def customer(request,cust_id):
 	orders = orderFilter.qs
 	context = {'customer': customer, 'orders': orders, 'total_orders': total_orders, 'orderFilter': orderFilter}
 	return render(request,'accounts/customer.html', context)		
+
+
+@login_required(login_url = 'login')
+@allowed_users(allowed_roles = ['admin'])
+def create_product(request):
+	if request.method == 'POST':
+		form = ProductForm(request.POST,request.FILES)
+		if form.is_valid():
+			form.save()
+			return redirect('products')
+		else:
+			messages.info(request, 'Incorrect data. Please, refill the details.')	
+	else:
+		form = ProductForm()
+
+	context = {'form' : form}
+	return render(request, 'accounts/create_product.html', context)
+
+
+@login_required(login_url = 'login')
+@allowed_users(allowed_roles = ['admin'])
+def update_product(request, prod_id):
+	product = Product.objects.get(id=prod_id)
+	if request.method == 'POST':
+		print(request.FILES)
+		form = ProductForm(request.POST,request.FILES,instance=product)
+		if form.is_valid():
+			print(form.cleaned_data)
+			form.save()
+			return redirect('products')
+	else:
+		form = ProductForm(instance=product)
+
+	context = {'form' : form, 'product' : product}
+	return render(request, 'accounts/update_product.html', context)	
+
+
+
+@login_required(login_url = 'login')
+@allowed_users(allowed_roles = ['admin'])
+def delete_product(request, prod_id):
+	product = Product.objects.get(id=prod_id)
+	if request.method == 'POST':
+		product.delete()
+		return redirect('products')
+	context = {'product' : product}
+
+	return render(request, 'accounts/delete_product.html', context)	
+
+
 
 @login_required(login_url = 'login')
 def create_order(request, cust_id):
@@ -84,16 +135,7 @@ def delete_order(request, ord_id):
 		order.delete()
 		return redirect('/')
 	context = {'order' : order}
-	order = Order.objects.get(id=ord_id)
-	order = Order.objects.get(id=ord_id)
-	if request.method == 'POST':
-		form = OrderForm(request.POST,instance=order)
-		if form.is_valid():
-			form.save()
-	if request.method == 'POST':
-		form = OrderForm(request.POST,instance=order)
-		if form.is_valid():
-			form.save()
+
 	return render(request, 'accounts/delete_order.html', context)		
 
 
@@ -135,11 +177,17 @@ def settings(request):
 			return redirect('settings')
 	else:
 		form = CustomerForm(instance = customer)
-		print(form)
 
 	context = {'form' : form}
 	return render(request, 'accounts/settings.html', context)
 
+
+@login_required(login_url = 'login')
+@allowed_users(allowed_roles = ['customer'])
+def buy_now(request, prod_id):	
+	product = Product.objects.get(id=prod_id)
+	context = {'product': product}
+	return render(request, 'accounts/buy_now.html', context)
 
 @unauthenticated_user
 def loginUser(request):	

@@ -19,7 +19,10 @@ def allowed_users(allowed_roles=[]):
 
 			if group in allowed_roles:
 				return view_function(request, *args, **kwrgs)
-			else:		
-				return redirect('home')	
+			else:
+				if group == 'admin':
+					return redirect('home')	
+				else:
+					return redirect('userPage')
 		return wrapper_func
 	return decoartor

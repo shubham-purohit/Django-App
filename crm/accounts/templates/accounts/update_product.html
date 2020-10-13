@@ -1,0 +1,39 @@
+{% extends 'accounts/main.html'  %}
+{% load static %}
+
+{% block content %}
+
+<style type="text/css">
+	.profile_pic {
+		width: 350px;
+		height: 320px;
+		margin: 0 auto;
+	}
+</style>
+
+<div class="row" style="padding-left: 20px; padding-top: 20px ;text-align: center;">
+	<div class="col-md-3">
+		<div class="card card-body">
+			<a href="{% url 'products'%}"><button class="bt btn-block btn-warning">&#8592 Back to products</button></a>
+			<hr>
+			<h1 style="text-align: center;">Product Details</h1>
+			<hr>
+			{% if product.product_pic %}
+				<img class="profile_pic" src="../../static/images/{{product.product_pic}}">
+			{% else %}
+				<img class="profile_pic" src="../../static/images/product.jpg">
+			{% endif %}
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="card card-body">
+			<form method="POST" action="" enctype='multipart/form-data'>
+				{% csrf_token %}
+				{{form.as_p}}
+				<input class="btn btn-primary btn-sm" type="submit" name="Submit">
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
