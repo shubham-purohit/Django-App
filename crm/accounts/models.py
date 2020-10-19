@@ -15,7 +15,7 @@ class Customer(models.Model):
 	date_created = models.DateTimeField(auto_now_add = True, null=True)	
 
 	def __str__(self):
-		return self.name
+		return self.user.username
 
 
 class Tag(models.Model):
@@ -36,7 +36,7 @@ class Product(models.Model):
 
 	name = models.CharField(max_length=200, null=True)
 	price = models.FloatField()
-	stock = models.PositiveIntegerField()
+	stock = models.PositiveIntegerField(default=0)
 	category = models.CharField(max_length=200, null=True, choices=CATEGORY)
 	product_pic = models.ImageField(null=True, blank=True)
 	description = models.CharField(max_length=200, null=True, blank=True)
@@ -55,10 +55,39 @@ class Order(models.Model):
 		)
 
 	customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
-	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 	date_created = 	models.DateTimeField(auto_now_add = True, null=True)
 	notes = models.CharField(max_length=1000, null=True)
 	status = models.CharField(max_length=200, null=True, choices=STATUS)
+	completed = models.BooleanField(default=False, null=True, blank=True)
 
 	def __str__(self):
-		return self.customer.name + "_" + self.product.name	
+		return self.customer.user.username + "_" + str(self.id)
+
+	@property
+	def get_total_items(self):
+		orderItems = self.orderitem_set.all()
+		total_items = sum([item.quantity for item in orderItems])
+		return total_items
+
+	@property
+	def get_order_amount(self):
+		orderItems = self.orderitem_set.all()
+		order_amount = sum([item.get_total_price for item in orderItems])
+		return order_amount
+		
+		
+
+
+
+class OrderItem(models.Model):
+	order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE)
+	product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL)
+	quantity = models.PositiveIntegerField(default=0, null=True, blank=True)
+	date_added = models.DateTimeField(auto_now_add = True)
+
+	def __str__(self):
+		return self.order.customer.username + "_" + self.product.name
+
+	@property	
+	def get_total_price(self):
+		return self.quantity * self.product.price	

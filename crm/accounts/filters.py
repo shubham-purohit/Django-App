@@ -9,3 +9,10 @@ class OrderFilter(FilterSet):
 		model = Order
 		fields = '__all__'
 		exclude = ['customer', 'date_created']
+
+class ProductFilter(FilterSet):
+	description = CharFilter(field_name='description', lookup_expr='icontains')
+	class Meta:
+		model = Product
+		fields = '__all__'
+		exclude = ['product_pic', 'tags', 'date_created', 'stock']		

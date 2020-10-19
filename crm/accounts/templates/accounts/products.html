@@ -35,7 +35,8 @@
 	  margin-right: 25px;
 	  margin-bottom: 30px;
 	  justify-content: center;
-	  background-color: white;	
+	  background-color: black;
+	  border-radius: 6%;	
 	  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	}
 
@@ -46,36 +47,42 @@
 
 </style>
 	<div style="margin: 0 10px; padding-bottom: 50px;">
-		<div class="card card-body" style="margin-bottom: 30px;">
+		{% if request.user.is_staff %}
+		<div class="card card-body" style="margin-bottom: 30px; background-color: green; border: none;">
 			<span style="display : inline-block">
-				{% if request.user.is_staff %}
-				<a style="display : inline-block" class="btn btn-primary btn-sm btn-block" href="{% url 'create_product' %}" style="margin: 10px 0; width: 50px;">Add Product</a>
-				{% endif %}
+				<a style="display : inline-block; background-color: black; color: white;" class="btn btn-sm btn-block" href="{% url 'create_product' %}" style="margin: 10px 0; width: 50px;">Add Product</a>
 			</span>
 		</div>
+		{% endif %}
+		<div class="card card-body" style="background-color: black;">
+			<form method='GET' style="color: white;">
+				{{productFilter.form}}
+				<button type="submit" class="btn btn-light btn-sm" style="width: 100px;">Search</button>
+			</form>
+		</div>
+		<br>
 		<section class="products">
 		{% for product in products %}	
 		  <div class="product-card">
 		    <div>
-		      <h5 style="text-align: center;"><strong>{{product.name}}</strong></h5>
+		      <h5 style="text-align: center; color: white;"><strong>{{product.name}}</strong></h5>
 		      	{% if product.product_pic %}
 					<img class="profile_pic" src="../../static/images/{{product.product_pic}}">
 				{% else %}
 					<img class="profile_pic" src="../../static/images/product.jpg">
 				{% endif %}
 		      <div class="product-info">
-		      <p style="padding-top: 10px;">{{product.description}}</p>
+		      <p style="padding-top: 10px; color: white;">{{product.description}}</p>
 		      <span class="inline-block data-block">
 		      	{% if request.user.is_staff %}
 		      	<a href="{% url 'update_product' product.id %}" ><button  class="product-info btn btn-sm" style="background-color: green; color: white;">Update</button></a>
 		      	<a href="{% url 'delete_product' product.id %}"><button class="product-info btn btn-sm btn-danger;" style="background-color: red; color: white;margin-left: 10px;">Delete</button></a>
-		      	{% endif %}
-		      	{% if not request.user.is_staff %}
-		      	<a href="{% url 'buy_now' product.id %}"><button  class="product-info btn btn-sm" style="background-color: green; color: white;">Buy now</button></a>
-		      	<a href=""><button class="product-info btn btn-sm" style="background-color: green; color: white; margin-left: 10px;">Add to cart</button></a>
+		      	{% else %}
+		      	<a href="{% url 'buy_now' product.id %}"><button  class="product-info btn btn-sm btn-warning" style="color: black;">Buy now</button></a>
+		      	<button data-product ={{product.id}} data-action="add" class="product-info btn btn-sm btn-warning update-cart" style="color: black; margin-left: 10px;">Add to cart</button>
 		      	{% endif %}
 		      	<h6 class="product-info" style="margin-left: auto;
-  order: 2;"><strong>${{product.price}}</strong></h6></span>
+  order: 2; color: white;"><strong>${{product.price}}</strong></h6></span>
 		    </div>
 		    </div>
 		  </div>

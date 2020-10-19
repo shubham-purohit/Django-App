@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+import json
 
 from .models import *
 from .forms import OrderForm, CustomerForm, CreateUserForm, ProductForm
-from .filters import OrderFilter
+from .filters import OrderFilter, ProductFilter
 from .decorators import unauthenticated_user, allowed_users
 
 
@@ -31,7 +32,11 @@ def dashboard(request):
 @login_required(login_url = 'login')
 def product(request):
 	products = Product.objects.all()
-	return render(request,'accounts/products.html',{'products':products})
+	productFilter = ProductFilter(request.GET, queryset=products)
+	
+	products = productFilter.qs
+	context = {'products':products, 'productFilter' : productFilter}
+	return render(request,'accounts/products.html',context)
 
 
 @login_required(login_url = 'login')
@@ -224,4 +229,39 @@ def register(request):
 	else:
 		form = CreateUserForm()
 	context = {'form': form}
-	return render(request, 'accounts/register.html', context)	
+	return render(request, 'accounts/register.html', context)
+
+
+def update_item(request):
+	data = json.loads(request.body)
+	productId = data['productId']
+	action = data['action']
+	product = Product.objects.get(id=productId)
+	order, created = Order.objects.get_or_create(customer = request.user.customer, completed=False)
+	orderItem, created = OrderItem.objects.get_or_create(order = order, product = product)
+
+	if action == 'add':
+		orderItem.quantity += 1
+	elif action == 'remove':
+		orderItem.quantity -= 1
+	elif action == 'delete':
+		orderItem.quantity = 0	
+	
+	orderItem.save()
+
+	if orderItem.quantity == 0:
+		orderItem.delete()		
+
+	return JsonResponse("Item was added", safe=False);
+
+
+def cart(request):
+	try:
+		order = Order.objects.get(customer=request.user.customer, completed=False)
+		orderItems = order.orderitem_set.all()
+		context = {'orderItems' : orderItems, 'order' : order}
+		print(context)
+	except:
+		print("Exception")
+		context = {}	
+	return render(request, 'accounts/cart.html', context)			

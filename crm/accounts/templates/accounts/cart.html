@@ -1,0 +1,80 @@
+{% extends 'accounts/main.html'  %}
+
+{% block content %}
+<br>
+
+<style type="text/css">
+	
+.thumbnail {
+	width: 100px;
+	height: 80px;
+}
+
+</style>
+
+<div style="margin: 0 10px;">
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8 card card-body" style="background-color: black;">
+				<div>
+					<a href="{% url 'products' %}"><button class="btn" style="border: 0.5px solid white; color: white;">&#8592 Continue Shopping</button></a>
+				</div>
+				<hr style="background-color: white;">
+				<div  class="inline-block">
+					<span  class="form-inline" style="display: flex; justify-content: space-between;">
+						<h5 class="inline-block" style="color: white;">Items:
+							{% if order %} 
+							<strong>{{order.get_total_items}}</strong>
+							{% else %}
+							<strong>0</strong>
+							{% endif %}
+						</h5>
+						<h5 class="inline-block" style="color: white;">Total: 
+							{% if order %} 
+							<strong>${{order.get_order_amount|floatformat:2}}</strong>
+							{% else %}
+							<strong>$0</strong>
+							{% endif %}
+						</h5>
+						<button class="btn btn-sm btn-warning inline-block" style="color: black">Checkout</button>
+					</span>
+				</div>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8 card card-body" style="background-color: black;"> 
+			{% if order and order.get_total_items != 0 %}
+			<table class="table" style="color: white;">
+				<thead>
+					<th></th>
+					<th>Item</th>
+					<th>Price</th>
+					<th>Quantity</th>
+					<th>Total</th>
+					<th></th>
+				</thead>
+				{% for item in orderItems %}
+				<tr>
+					<td><img class="thumbnail" src="../../static/images/{{item.product.product_pic}}"></td>
+					<td>{{item.product.name}}</td>
+					<td>${{item.product.price|floatformat:2}}</td>
+					<td class="inline-block">
+						<button class="btn btn-sm btn-light" ><i data-product={{item.product.id}} data-action="remove" class="fa fa-minus update-cart"></i></button>
+						<span style="padding: 0 2px;">{{item.quantity}}</span>
+						<button class="btn btn-sm btn-light" ><i data-product={{item.product.id}} data-action="add" class="fa fa-plus update-cart"></i></button>
+					</td>
+					<td>${{item.get_total_price|floatformat:2}}</td>
+					<td><button data-product={{item.product.id}} data-action="delete" class="btn btn-sm btn-danger update-cart">Remove</button></td>
+				</tr>
+				{% endfor %}
+			</table>
+			{% else %}
+			<h3 style="text-align: center; color: white;">The cart is empty</h3>
+			{% endif %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}

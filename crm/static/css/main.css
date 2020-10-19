@@ -29,13 +29,13 @@ body {
 }
 
 #total-orders {
-	background-color: #4cb4c7;
+	background-color: black;
 }
 
 #orders-delivered {
-	background-color: #7abecc;
+	background-color: black;
 }
 
 #orders-pending {
-	background-color: #7cd1c0;
+	background-color: black !important;
 }
